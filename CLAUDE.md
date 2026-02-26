@@ -27,7 +27,7 @@ search-rank-tracker/
 |---|---|---|
 | スクレイピング | Python 3.11+ / requests / BeautifulSoup | JS描画不可時は Playwright へ切替 |
 | データ加工 | pandas | CSV 出力にも利用 |
-| DB | Supabase (PostgreSQL) | ローカル運用。将来 Auth 追加予定 |
+| DB | Supabase (PostgreSQL) | スキーマ `rank_tracker` で分離。ローカル運用。将来 Auth 追加予定 |
 | フロント | Next.js | Supabase client で直接読取り |
 | スケジューラ | Windows タスクスケジューラ | 2 時間おき（1日12回） |
 | パッケージ管理 | uv (Python) / npm or pnpm (Next.js) | |
@@ -60,6 +60,9 @@ search-rank-tracker/
    - User-Agent を適切に設定（bot と分かる文字列は避ける）
 4. **DB スキーマ変更は必ずマイグレーションファイルで管理**
    `supabase/migrations/` に SQL ファイルを追加する形で行う。
+   - **スキーマ分離**: 全テーブルは `rank_tracker` スキーマに配置（`public` スキーマは使わない）
+   - Supabase の同一プロジェクトを複数ツールで共有するため、スキーマで名前空間を分離する
+   - テーブル参照は必ず `rank_tracker.products` のように完全修飾名を使う
 5. **テスト**
    - collector: pytest でユニットテスト必須
    - dashboard: 最低限 lint (ESLint) を通す
